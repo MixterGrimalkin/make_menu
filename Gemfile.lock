@@ -1,0 +1,21 @@
+PATH
+  remote: .
+  specs:
+    make_menu (0.0.4)
+      tty-screen (~> 0.8.2)
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    bump (0.10.0)
+    tty-screen (0.8.2)
+
+PLATFORMS
+  arm64-darwin-21
+
+DEPENDENCIES
+  bump
+  make_menu!
+
+BUNDLED WITH
+   2.3.26
