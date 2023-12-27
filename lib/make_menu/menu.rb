@@ -12,12 +12,10 @@ module MakeMenu
     def initialize(makefile)
       @groups = []
       @items = []
-      @status_present = false
       build makefile
     end
 
     attr_reader :groups, :items
-    attr_accessor :status_present
 
     # Display menu and prompt for command
     # rubocop:disable Metrics/MethodLength
@@ -48,7 +46,6 @@ module MakeMenu
     # Display the company logo and the status bar (if set)
     def display_header
       puts formatted_logo if logo
-      puts `make status` if status_present
     end
 
     private
@@ -76,12 +73,6 @@ module MakeMenu
             # Target 'menu' should not appear
             next if target == 'menu'
 
-            # Target 'status' should not appear, but is run automatically when the menu is rendered
-            if target == 'status'
-              self.status_present = true
-              next
-            end
-
             unless current_group
               current_group = MenuItemGroup.new('Commands'.color(group_title_color))
               groups << current_group
@@ -106,6 +97,13 @@ module MakeMenu
         end
       end
 
+    rescue Errno::ENOENT => _e
+      puts
+      puts 'No Makefile!'.red.bold
+      puts
+      puts "File '#{makefile}' could not be found.".yellow
+      puts
+      exit 1
     end
 
     # rubocop:enable Metrics/MethodLength
@@ -162,14 +160,12 @@ module MakeMenu
 
     protected
 
-    # Override the following methods to customise the menu display
-
     # @return [Symbol,Array[Symbol]] Color for group title
     def group_title_color
       %i[yellow bold]
     end
 
-    # Clean screen before and after each command
+    # Clear screen before and after each command
     def clear_screen?
       true
     end

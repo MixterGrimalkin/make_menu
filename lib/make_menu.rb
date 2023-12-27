@@ -1,6 +1,5 @@
 require_relative 'make_menu/color_string'
 require_relative 'make_menu/menu'
-require_relative 'make_menu/status_panel'
 
 require 'tty-screen'
 
@@ -19,18 +18,17 @@ module MakeMenu
     else
       MakeMenu::Menu.new(makefile).run
     end
-  rescue LoadError, NameError => _e
-    puts "ERROR! Expected file ./#{menu_name.downcase}_menu.rb to define class #{menu_name.capitalize}Menu < MakeMenu::Menu".red
-  end
 
-  # def self.status
-  #   if (menu_name = ENV.fetch('MENU', nil))
-  #     require "./#{menu_name.downcase}_status_panel.rb"
-  #     Object.const_get("#{menu_name.capitalize}StatusPanel").new.display
-  #   else
-  #     MakeMenu::StatusPanel.new.display
-  #   end
-  # rescue LoadError => _e
-  #   puts "ERROR! Expected file ./#{menu_name.downcase}_status_panel.rb to define class #{menu_name.capitalize}StatusPanel < MakeMenu::StatusPanel".red
-  # end
+  rescue LoadError, NameError => _e
+    puts
+    puts 'No customisation class found!'.red.bold
+    puts
+    puts 'Expected file:'
+    puts "    ./#{menu_name.downcase}_menu.rb".cyan
+    puts
+    puts 'To define class:'
+    puts "    #{menu_name.capitalize}Menu < MakeMenu::Menu".yellow
+    puts
+    exit 1
+  end
 end
