@@ -1,7 +1,7 @@
 .SILENT:
 
 menu:
-	ruby -r ./lib/make_menu -e MakeMenu.run
+	MENU=Gem ruby -r ./lib/make_menu -e MakeMenu.run
 
 ### Gem
 
