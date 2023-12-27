@@ -5,5 +5,6 @@ class GemMenu < MakeMenu::Menu
     puts
     puts '  MakeMenu  '.bold.black.light_yellow_bg.align(:center)
     puts MakeMenu::VERSION.center(12).bold.light_yellow.black_bg.align(:center)
+    puts
   end
 end
