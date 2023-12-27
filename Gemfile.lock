@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    make_menu (0.0.4)
+    make_menu (0.0.5)
       tty-screen (~> 0.8.2)
 
 GEM
