@@ -19,18 +19,18 @@ module MakeMenu
     else
       MakeMenu::Menu.new(makefile).run
     end
-  rescue LoadError => _e
-    puts "ERROR! Expected file ./#{menu_name.downcase}_menu.rb to define class #{menu_name.capitalize}Menu < MakeMenu::Menu"
+  rescue LoadError, NameError => _e
+    puts "ERROR! Expected file ./#{menu_name.downcase}_menu.rb to define class #{menu_name.capitalize}Menu < MakeMenu::Menu".red
   end
 
-  def self.status
-    if (menu_name = ENV.fetch('MENU', nil))
-      require "./#{menu_name.downcase}_status_panel.rb"
-      Object.const_get("#{menu_name.capitalize}StatusPanel").new.display
-    else
-      MakeMenu::StatusPanel.new.display
-    end
-  rescue LoadError => _e
-    puts "ERROR! Expected file ./#{menu_name.downcase}_status_panel.rb to define class #{menu_name.capitalize}StatusPanel < MakeMenu::StatusPanel"
-  end
+  # def self.status
+  #   if (menu_name = ENV.fetch('MENU', nil))
+  #     require "./#{menu_name.downcase}_status_panel.rb"
+  #     Object.const_get("#{menu_name.capitalize}StatusPanel").new.display
+  #   else
+  #     MakeMenu::StatusPanel.new.display
+  #   end
+  # rescue LoadError => _e
+  #   puts "ERROR! Expected file ./#{menu_name.downcase}_status_panel.rb to define class #{menu_name.capitalize}StatusPanel < MakeMenu::StatusPanel".red
+  # end
 end

@@ -83,7 +83,7 @@ module MakeMenu
             end
 
             unless current_group
-              current_group = MenuItemGroup.new
+              current_group = MenuItemGroup.new('Commands'.color(group_title_color))
               groups << current_group
             end
 
@@ -94,7 +94,18 @@ module MakeMenu
             option_number += 1
           end
         end
+
+        if option_number == 1
+          puts
+          puts 'No annotated targets found!'.red.bold
+          puts
+          puts 'Expecting something like this....'
+          puts "    #{'my_target:'.cyan} #{'## Do some things'.yellow}"
+          puts
+          exit 1
+        end
       end
+
     end
 
     # rubocop:enable Metrics/MethodLength
@@ -144,7 +155,7 @@ module MakeMenu
 
     # Get the menu logo from the LOGO constant
     def logo
-      return "\n#{' make '.black_bg.light_yellow}#{' menu '.light_yellow_bg.black}\n".bold unless Object.const_defined?("#{self.class.name}::LOGO")
+      return "\n#{"  #{Dir.pwd.split('/').last}  ".light_yellow_bg.black.bold}\n \n" unless Object.const_defined?("#{self.class.name}::LOGO")
 
       Object.const_get("#{self.class.name}::LOGO")
     end
@@ -152,10 +163,10 @@ module MakeMenu
     protected
 
     # Override the following methods to customise the menu display
-    1
-    # @return [Symbol] Color for group title
+
+    # @return [Symbol,Array[Symbol]] Color for group title
     def group_title_color
-      :bold
+      %i[yellow bold]
     end
 
     # Clean screen before and after each command
