@@ -1,9 +1,9 @@
 .SILENT:
 
 menu:
-	MENU=Gem ruby -r ./lib/make_menu -e MakeMenu.run
+	ruby tools/menu.rb
 
-### Gem
+### Local
 
 build: ## Build Gem
 	gem build
@@ -11,7 +11,15 @@ build: ## Build Gem
 install: ## Install locally
 	gem install `ls -1t *.gem | head -n 1`
 
-build_install: build install ## Build and install
+build_install: build install ## Build and Install
 
-publish: ## Publish to RubyGems
+uninstall: ## Uninstall locally
+	gem uninstall make_menu
+
+clear: ## Clear old gems
+	tools/clear_gems.sh
+
+### RubyGems
+
+publish: ## Publish Gem
 	gem push `ls -1t *.gem | head -n 1`

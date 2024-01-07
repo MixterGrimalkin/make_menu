@@ -5,9 +5,6 @@ module MakeMenu
   class MenuItem
     INDENT = 6
 
-    # @param [Integer] option_number Number user enters for this command
-    # @param [String] target Name of target defined in Makefile
-    # @param [String] description Text to display for this command, taken from Makefile comment
     def initialize(option_number = nil, target = nil, description = nil)
       @option_number = option_number
       @target = target
@@ -16,17 +13,16 @@ module MakeMenu
 
     attr_reader :option_number, :target, :description
 
-    # Run the make target
     def execute
       cmd = ['make', target]
       puts "> #{cmd.join(' ').cyan}\n"
       unless system(*cmd)
         # Indicates the command failed, so we pause to allow user to see error message
-        puts "\nPress ENTER key to continue....\n"
+        puts "\nPress ENTER to continue....".dark
         gets
       end
     rescue StandardError => _e
-      # ignore CTRL+C from within Make target
+      # Sink keyboard interrupt from within Make target
     end
 
     # @return [Integer] Number of characters required to display the item

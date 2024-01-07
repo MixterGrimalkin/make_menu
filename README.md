@@ -2,7 +2,7 @@
 
 A Ruby gem to automatically create a number-selection text menu from an annotated Makefile.
 
-### Installation
+## Installation
 
 To install this gem locally, run the following command:
 
@@ -10,134 +10,196 @@ To install this gem locally, run the following command:
 gem install make_menu
 ```
 
-Or, if you are using Bundler, add this line to your Gemfile:
+Or add this to your Gemfile:
 
 ```ruby
-gem 'make_menu'
+gem 'make_menu', '~> 1.0.0'
 ```
 
-and run `bundle install`.
+And run `bundle install`.
 
-Once the gem is installed you can open a menu built from the Makefile in the current directory with the command:
+## The Makefile
+
+MakeMenu builds a menu from annotations in the Makefile:
+
+```makefile
+# ~/code/all_the_things/Makefile
+
+.SILENT:
+
+prepare:
+    chmod +x ./*sh
+
+### Start Things
+
+thing: prepare ## Do something
+	tools/do_the_thing.sh
+
+otherthing: prepare ## Do something else 
+	tools/do_another_thing.sh
+
+### Stop Things
+
+nothing: ## Kill all the things
+	kill `ps aux | greo '_thing' | grep -v | awk '{ print $2 }'`
+```
+
+## Opening the Menu
+
+Run the command:
 
 ```bash
 ruby -r make_menu -e MakeMenu.run
 ```
 
-### The Makefile
+And you'll get:
 
-Although `make` is a build tool, I often use it for starting Rails applications. Here is an example Makefile
-for a Rails application called **AllTheThings**:
+```text
 
-```makefile
-# ~/code/all_the_things/Makefile
-.SILENT:
+           ALL_THE_THINGS  
 
-go:
-	rails s > /dev/null &
+    Start Things                 
+       1.  Do something          
+       2.  Do something else     
+                                 
+    Stop Things                  
+       3.  Kill all the things   
+                                 
 
-stop:
-	kill `cat tmp/pids/server.pid`
+         Press ESC to quit
 
-migrate:
-	rake db:migrate
-	rake db:test:prepare
-    
-console:
-	rails c
-	
-```
-
-I run these targets from the command line with `make go`, `make stop`, etc.
-
-For MakeMenu to build a menu from this file we must annotate the targets with double-hash comments. We can also add
-a default target (first target in file) which opens the menu, so we can open the menu with just `make`:
-
-```makefile
-# ~/code/all_the_things/Makefile
-.SILENT:
-
-menu:
-	ruby -r make_menu -e MakeMenu.run
-    
-go: ## Start server
-	rails s > /dev/null &
-
-stop: ## Stop server
-	kill `cat tmp/pids/server.pid`
-
-migrate: ## Migrate database
-	rake db:migrate
-	rake db:test:prepare
-    
-console:
-	rails c
+          Select option: 
 
 ```
 
-MakeMenu will render this Makefile as:
+Type `1` and press ENTER to run the command `make thing`. When the command is complete
+the menu will redraw. Press ESCAPE to quit the menu.
 
-<img src="img/screenshot_1.png" alt="screenshot" width="50%"/>
+The menu is centred on screen and the groups will arrange themselves to take advantage of the terminal width.
+If you change the size of your terminal window simply press ENTER to redraw the menu.
 
-Typing '3' and pressing ENTER will run the command `make migrate` and then return to the menu. Simply pressing ENTER
-with no input will exit the menu.
+## Customisation
 
-Note that the `console` target does not appear in the menu because it is not annotated.
+You can pass a block to the `run` method to customise the appearance of the menu:
 
-### Grouping targets
+```ruby
+# ~/code/all_the_things/menu.rb
 
-It is possible to split the targets into related groups by adding triple-hash comments on their own lines:
+require 'make_menu'
 
-```makefile
-# ~/code/all_the_things/Makefile
-.SILENT:
+MakeMenu.run do |menu|
+  menu.options do
+    {
+      group_title_color: :cyan,
+      clear_screen: true,
+      pause_on_success: true
+    }
+  end
 
-menu:
-	ruby -r make_menu -e MakeMenu.run
-    
-### Rails Server
+  menu.highlights do
+    {
+      'thing' => :underline,
+      'Do' => :bold,
+      'Kill' => %i[red_bg light_yellow bold]
+    }
+  end
 
-go: ## Start server
-	rails s > /dev/null &
-
-stop: ## Stop server
-	kill `cat tmp/pids/server.pid`
-
-### Database
-
-migrate: ## Migrate database
-	rake db:migrate
-	rake db:test:prepare
-    
-console:
-	rails c
-
+  menu.header do
+    puts
+    puts 'A   T   T        '.bold.red.align(:center)
+    puts ' L   H   H  N    '.bold.yellow.align(:center)
+    puts '  L   E   I  G   '.bold.green.align(:center)
+    puts '              S  '.bold.green.align(:center)
+    puts
+    puts " version #{`bump current`.strip} ".blue_bg.light_yellow.align(:center)
+    puts
+  end
+end
 ```
 
-This will render as:
-
-<img src="img/screenshot_2.png" alt="screenshot" width="50%"/>
-
-### Customisation
-
-You can customise the appearance of the menu by creating your own class inheriting from `MakeMenu::Menu`. You specify
-the name of your custom class through an environment variable called MENU.
-
-For example:
+Then open the menu with:
 
 ```bash
-MENU=Example ruby -r make_menu -e MakeMenu.run
+ruby menu.rb
 ```
 
-This assumes a class called `ExampleMenu` is defined in the file `example_menu.rb` in the current directory.
+## Colors
 
-Running this command in the `/examples` directory of this repository will render this menu:
+MakeMenu monkey-patches `String` with some cosmetic methods.
 
-<img src="img/screenshot_3.png" alt="screenshot" width="50%"/>
+You can align a string relative to the terminal width:
 
-See the example_menu.rb file to see how this is achieved.
+```ruby
+str.align(:center)
+```
 
-### Happy making!
+Or for a multi-line string:
 
+```ruby
+str.align_block(:center)
+```
+You can change the colo(u)r of the text:
 
+```ruby
+str.color(:red)
+```
 
+Or add multiple colors:
+
+```ruby
+str.color([:red_bg, :yellow, :bold])
+```
+
+Or use the color names as chained method calls:
+
+```ruby
+str.red_bg.yellow.bold
+```
+
+The following colors are available:
+
+```text
+white
+normal
+bold
+dark
+underline
+blink
+invert
+black
+
+red
+green
+yellow
+blue
+magenta
+cyan
+grey
+
+black_bg
+red_bg
+green_bg
+yellow_bg
+blue_bg
+magenta_bg
+cyan_bg
+grey_bg
+
+dark_grey
+light_red
+light_green
+light_yellow
+light_blue
+light_magenta
+light_cyan
+light_grey
+
+dark_grey_bg 
+light_red_bg 
+light_green_bg 
+light_yellow_bg 
+light_blue_bg 
+light_magenta_bg 
+light_cyan_bg 
+light_grey_bg
+```

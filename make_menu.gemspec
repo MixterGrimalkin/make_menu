@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 require File.expand_path('lib/make_menu/version', __dir__)
 
 Gem::Specification.new do |s|
-  s.name = "make_menu"
+  s.name = 'make_menu'
   s.version = MakeMenu::VERSION
-  s.summary = "Generates an interactive menu from a Makefile"
-  s.authors = ["Barri Mason"]
-  s.email = "loki@amarantha.net"
+  s.summary = 'Generates an interactive menu from a Makefile'
+  s.authors = ['Barri Mason']
+  s.email = 'loki@amarantha.net'
   s.files = Dir[
     'lib/**/*.rb',
     'make_menu.gemspec',
@@ -13,8 +15,8 @@ Gem::Specification.new do |s|
     'Gemfile.lock'
   ]
   s.homepage =
-    "https://github.com/MisterGrimalkin/make_menu"
-  s.license = "MIT"
+    'https://github.com/MisterGrimalkin/make_menu'
+  s.license = 'MIT'
   s.add_dependency 'tty-screen', '~> 0.8.2'
-  s.description = ""
+  s.description = ''
 end
