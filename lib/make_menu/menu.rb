@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require_relative 'builder'
+require_relative 'badge_set'
+require_relative 'field_set'
 require_relative 'menu_item_group'
 require_relative 'text/table'
 require_relative 'console/prompter'
@@ -21,7 +23,10 @@ module MakeMenu
         pause_on_success: false
       }
       @highlights = {}
+
       @header = nil
+      @field_set = nil
+      @badge_set = nil
     end
 
     attr_reader :makefile, :groups, :items, :options, :highlights
@@ -35,6 +40,8 @@ module MakeMenu
         system 'clear' if clear_screen?
 
         display_header
+        display_badges
+        display_fields
 
         puts colorize(MakeMenu::Text::Table.new(groups).to_s)
         puts
@@ -73,6 +80,10 @@ module MakeMenu
       end
     end
 
+    def header(&block)
+      @header = block
+    end
+
     def display_header
       if @header
         @header.call
@@ -80,6 +91,30 @@ module MakeMenu
         logo = "  #{Dir.pwd.split('/').last.upcase}  ".invert.bold.to_s
         puts "\n#{logo.align(:center)}\n \n"
       end
+    end
+
+    def add_field(field, &block)
+      fields.add field, &block
+    end
+
+    def fields
+      @field_set ||= FieldSet.new
+    end
+
+    def display_fields
+      @field_set.display if @field_set
+    end
+
+    def add_badge(label = '', on: ' ON '.green_bg.bold, off: ' OFF '.red_bg.dark, &block)
+      badges.add label, on: on, off: off, &block
+    end
+
+    def badges
+      @badge_set ||= BadgeSet.new
+    end
+
+    def display_badges
+      @badge_set.display if @badge_set
     end
 
     def options
@@ -90,10 +125,6 @@ module MakeMenu
     def highlights
       @highlights.merge!(yield) if block_given?
       @highlights
-    end
-
-    def header(&block)
-      @header = block
     end
 
     def add_group(group)
