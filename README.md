@@ -13,7 +13,7 @@ gem install make_menu
 Or add this to your Gemfile:
 
 ```ruby
-gem 'make_menu', '~> 1.0'
+gem 'make_menu', '~> 1.1.0'
 ```
 
 And run `bundle install`.
