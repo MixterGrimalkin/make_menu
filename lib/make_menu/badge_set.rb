@@ -9,7 +9,7 @@ module MakeMenu
       row = ''
       @badges.each do |badge|
         label = badge[:label]
-        value = badge[:handler].call ? badge[:on] : badge[:off]
+        value = badge[:handler].call
         if row.decolor.size + label.decolor.size + value.decolor.size >= (0.7 * ::TTY::Screen.cols)
           rows << row
           row = ''
@@ -22,11 +22,9 @@ module MakeMenu
       puts
     end
 
-    def add(label = '', on: ' ON '.green_bg.bold, off: ' OFF '.red_bg.dark, &block)
+    def add(label = '', &block)
       @badges << {
         label: label,
-        on: on,
-        off: off,
         handler: block
       }
     end

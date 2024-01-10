@@ -20,7 +20,8 @@ module MakeMenu
       @options = {
         group_title_color: :underline,
         clear_screen: true,
-        pause_on_success: false
+        pause_on_success: false,
+        badges_first: true
       }
       @highlights = {}
 
@@ -42,6 +43,14 @@ module MakeMenu
         display_header
         display_badges
         display_fields
+
+        if badges_first?
+          display_badges
+          display_fields
+        else
+          display_fields
+          display_badges
+        end
 
         puts colorize(MakeMenu::Text::Table.new(groups).to_s)
         puts
@@ -93,8 +102,8 @@ module MakeMenu
       end
     end
 
-    def add_field(field, &block)
-      fields.add field, &block
+    def add_field(label = '', value_from_file: nil, color: :normal, none: '[none]'.dark, &block)
+      fields.add label, value_from_file: value_from_file, color: color, none: none, &block
     end
 
     def fields
@@ -105,8 +114,8 @@ module MakeMenu
       @field_set.display if @field_set
     end
 
-    def add_badge(label = '', on: ' ON '.green_bg.bold, off: ' OFF '.red_bg.dark, &block)
-      badges.add label, on: on, off: off, &block
+    def add_badge(label = '', &block)
+      badges.add label, &block
     end
 
     def badges
@@ -147,6 +156,10 @@ module MakeMenu
 
     def pause_on_success?
       options[:pause_on_success]
+    end
+
+    def badges_first?
+      options[:badges_first]
     end
 
     def colorize(text)
