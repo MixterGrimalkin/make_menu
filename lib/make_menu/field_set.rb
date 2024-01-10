@@ -12,14 +12,14 @@ module MakeMenu
                        .align(
                          :right,
                          width: @max_widths[:label]
-                       ).color(field[:label_color])
+                       )
 
         value_cel = field[:value]
                       .align(
                         :left,
                         width: @max_widths[:value],
                         pad_right: true
-                      ).color(field[:value_color])
+                      )
 
         puts "#{label_cell}#{value_cel}".align(:center)
       end
@@ -40,11 +40,19 @@ module MakeMenu
       end
     end
 
-    def add(label = nil, label_color: :normal, value_color: :normal, &block)
+    def add(label = '', value_from_file: nil, color: :normal, none: '[none]'.dark, &block)
+      if value_from_file
+        block = lambda do
+          if File.exists? value_from_file
+            return File.read(value_from_file).strip.color(color)
+          else
+            return none
+          end
+        end
+      end
+
       @fields << {
-        label: label || '',
-        label_color: label_color,
-        value_color: value_color,
+        label: label,
         handler: block
       }
     end

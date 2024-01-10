@@ -13,7 +13,7 @@ gem install make_menu
 Or add this to your Gemfile:
 
 ```ruby
-gem 'make_menu', '~> 1.0'
+gem 'make_menu', '~> 2.0.0'
 ```
 
 And run `bundle install`.
@@ -28,7 +28,7 @@ MakeMenu builds a menu from annotations in the Makefile:
 .SILENT:
 
 prepare:
-    chmod +x ./*sh
+    chmod +x ./*.sh
 
 ### Start Things
 
@@ -88,22 +88,7 @@ You can pass a block to the `run` method to customise the appearance of the menu
 require 'make_menu'
 
 MakeMenu.run do |menu|
-  menu.options do
-    {
-      group_title_color: :cyan,
-      clear_screen: true,
-      pause_on_success: true
-    }
-  end
-
-  menu.highlights do
-    {
-      'thing' => :underline,
-      'Do' => :bold,
-      'Kill' => %i[red_bg light_yellow bold]
-    }
-  end
-
+  # Block called before each time the menu redraws
   menu.header do
     puts
     puts 'A   T   T        '.bold.red.align(:center)
@@ -113,6 +98,57 @@ MakeMenu.run do |menu|
     puts
     puts " version #{`bump current`.strip} ".blue_bg.light_yellow.align(:center)
     puts
+  end
+
+  # All options shown here with their defaults
+  menu.options do
+    {
+      group_title_color: :underline,
+      clear_screen: true,
+      pause_on_success: false,
+      badges_first: true
+    }
+  end
+
+  # Any matching text within the menu body is colored as defined here
+  menu.highlights do
+    {
+      'thing' => :underline,
+      'Do' => :bold,
+      'Kill' => %i[red_bg light_yellow bold]
+    }
+  end
+
+  # BADGES are displayed between the header and the menu body in a wrapping horizontal line
+  # e.g.
+  #   [LABEL][value]  [LABEL][value]  [LABEL][value]
+  # 
+  menu.add_badge 'SERVER = ' do
+    if process_running? 'my_lovely_server'
+      ' ON-LINE '.green_bg.bold
+    else
+      ' OFFLINE '.red_bg.dark
+    end
+  end
+
+  # FIELDS are displayed between the header and the menu body in a vertical stack
+  # e.g.
+  #   [     LABEL][value            ]
+  #   [LONG_LABEL][value            ] 
+  #   [     OTHER][really long value]
+  # 
+  menu.add_field 'Random number: ' do
+    rand(100).to_s
+  end
+  
+  # This one reads the value from a file
+  menu.add_field 'Contents of MyFile.txt: ', 
+                 value_from_file: 'MyFile.txt', 
+                 color: :green,
+                 none: '[none]'.dark
+
+  def process_running?(name)
+    !`ps aux | grep #{name} | grep -v grep`.empty?
   end
 end
 ```
