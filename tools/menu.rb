@@ -20,7 +20,7 @@ MakeMenu.run do |menu|
   menu.header do
     puts
     puts '  MakeMenu  '.bold.black.light_yellow_bg.align(:center)
-    puts `bump current`.center(12).bold.light_yellow.black_bg.align(:center)
+    puts `bump current`.strip.center(12).bold.light_yellow.black_bg.align(:center)
     puts
   end
 end
