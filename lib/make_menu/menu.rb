@@ -41,8 +41,6 @@ module MakeMenu
         system 'clear' if clear_screen?
 
         display_header
-        display_badges
-        display_fields
 
         if badges_first?
           display_badges
