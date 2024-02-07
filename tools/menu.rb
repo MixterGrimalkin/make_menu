@@ -2,21 +2,19 @@
 
 require_relative '../lib/make_menu'
 
+OPTIONS = {
+  group_title_color: %i[yellow bold],
+  clear_screen: true,
+  pause_on_success: true
+}
+
+HIGHLIGHTS = {
+  'Build and Install' => %i[bold light_yellow]
+}
+
 MakeMenu.run do |menu|
-  menu.options do
-    {
-      group_title_color: %i[yellow bold],
-      clear_screen: true,
-      pause_on_success: true
-    }
-  end
-
-  menu.highlights do
-    {
-      'Build and Install' => %i[bold light_yellow]
-    }
-  end
-
+  menu.options { OPTIONS }
+  menu.highlights { HIGHLIGHTS }
   menu.header do
     puts
     puts '  MakeMenu  '.bold.black.light_yellow_bg.align(:center)

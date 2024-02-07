@@ -7,10 +7,29 @@ module MakeMenu
     module Prompter
       PressedEscape = Class.new(StandardError)
 
-      def self.prompt(text = '', obscure: false)
-        print text
+      def self.prompt_and_save(text, file:, obscure: false)
+        if file.is_a? Symbol
+          file = ".#{file}"
+        end
 
-        input = ''
+        current = File.exists?(file) ? File.read(file).strip : ''
+
+        response = prompt(text, input: current, obscure: obscure)
+
+        if response.empty?
+          File.delete(file) if File.exists?(file)
+        else
+          File.write(file, response)
+        end
+
+        return response
+      end
+
+      def self.prompt(text = '', input: '', obscure: false, value_color: :light_yellow)
+        text = text.bold
+
+        print "\r#{text}#{input.color(value_color)}"
+
         char = ''
 
         until !char.empty? && char.ord == 13
@@ -21,11 +40,17 @@ module MakeMenu
             # BACKSPACE
             input = input[0..-2]
             print "\r#{text}#{' ' * input.size} "
-            print "\r#{text}#{obscure ? '*' * input.size : input}"
+            print "\r#{text}#{obscure ? '*'.color(value_color) * input.size : input.color(value_color)}"
 
           when 27
             # ESC
-            raise PressedEscape
+            raise PressedEscape if input.empty?
+
+            print "\r#{text}#{' ' * input.size} "
+            print "\r#{text}"
+
+            input = ''
+            char = ''
 
           when 13
             # ENTER
@@ -33,12 +58,15 @@ module MakeMenu
           else
             input += char
             if obscure
-              print '*'
+              print '*'.color(value_color)
             else
-              print char
+              print char.color(value_color)
             end
           end
         end
+
+        print "\r#{text}#{' ' * input.size} "
+        print "\r#{text}"
 
         input
       end

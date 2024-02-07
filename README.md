@@ -13,7 +13,7 @@ gem install make_menu
 Or add this to your Gemfile:
 
 ```ruby
-gem 'make_menu', '~> 2.0.0'
+gem 'make_menu', '~> 2.1.0'
 ```
 
 And run `bundle install`.
@@ -77,6 +77,35 @@ the menu will redraw. Press ESCAPE to quit the menu.
 
 The menu is centred on screen and the groups will arrange themselves to take advantage of the terminal width.
 If you change the size of your terminal window simply press ENTER to redraw the menu.
+
+## Prompter
+
+MakeMenu has a simple prompting tool which you can access directly. As an example, this command will display
+the message "What is your favourite colour?" and allow the user to type a response. The response is returned on
+standard error, so can be saved into a shell variable while still allowing the terminal to be used for user
+interaction.
+
+```bash
+export fav_colour=$(ruby -r make_menu -e 'MakeMenu.prompt "What is your favourite colour? "' 2>&1 >/dev/tty)
+```
+
+You can also have the value loaded and saved to a file in the current directory.
+
+If you want to save the value to a file and have that value appear for editing next time, do this:
+
+```bash
+ruby -r make_menu -e 'MakeMenu.prompt "What is your favourite colour?", value_from_file: :fav_colour'
+```
+
+Using a Symbol for `value_from_file` will assume a hidden file (ie. starting with `.`) so the above line
+will use the file `.fav_colour`.
+
+You can pass additional text as the first argument. This is printed above the prompt. If you omit the prompt, the
+last line of the first argument will be used instead. So the above could be written:
+
+```bash
+ruby -r make_menu -e 'MakeMenu.prompt value_from_file: :fav_colour' 'What is your favourite colour?'
+```
 
 ## Customisation
 
@@ -174,6 +203,9 @@ Or for a multi-line string:
 ```ruby
 str.align_block(:center)
 ```
+
+NOTE: You can't use the standard Ruby `ljust` etc. if the string contains colour codes.
+
 You can change the colo(u)r of the text:
 
 ```ruby

@@ -2,6 +2,7 @@
 
 module MakeMenu
   module Builder
+    # Parse `makefile` and add all annotated targets to `menu`
     def self.build(makefile, menu)
       File.open(makefile, 'r') do |file|
         option_number = 1
