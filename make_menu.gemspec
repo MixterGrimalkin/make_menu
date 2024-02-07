@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
     'Gemfile.lock'
   ]
   s.homepage =
-    'https://github.com/MisterGrimalkin/make_menu'
+    'https://github.com/MixterGrimalkin/make_menu'
   s.license = 'MIT'
   s.add_dependency 'tty-screen', '~> 0.8.2'
   s.description = ''
