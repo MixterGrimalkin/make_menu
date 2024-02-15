@@ -2,21 +2,23 @@
 
 module MakeMenu
   module Text
+    SPACING = 2
+
     # A column of text with a fixed with
     class Column
-      def initialize(width)
-        @width = width
+      def initialize
+        @width = nil
         @rows = []
         @row_index = 0
       end
 
-      attr_reader :width
-
-      attr_accessor :rows, :row_index
+      attr_accessor :rows, :row_index, :width
 
       # Add a block of text to the column. Each row will be padded to the column width
       def add(text)
         self.rows += text.split("\n").map do |row|
+          self.width = row.decolor.size + SPACING unless width
+          self.width = [width, row.decolor.size + SPACING].max
           row.gsub("\r", '')
         end
         self.row_index += text.lines.size
