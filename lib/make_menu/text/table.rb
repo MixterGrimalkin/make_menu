@@ -64,7 +64,7 @@ module MakeMenu
 
       # Add a new column to the table
       def column_break
-        self.current_column = Column.new(column_width)
+        self.current_column = Column.new
         columns << current_column
       end
 
