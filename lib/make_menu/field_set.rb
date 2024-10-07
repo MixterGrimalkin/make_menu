@@ -22,7 +22,7 @@ module MakeMenu
           value_from_file = ".#{value_from_file}"
         end
         block = lambda do
-          if File.exists? value_from_file
+          if File.exist? value_from_file
             value = File.read(value_from_file).strip
 
             return none if value.empty?

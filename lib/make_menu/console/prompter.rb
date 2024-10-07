@@ -12,12 +12,12 @@ module MakeMenu
           file = ".#{file}"
         end
 
-        current = File.exists?(file) ? File.read(file).strip : ''
+        current = File.exist?(file) ? File.read(file).strip : ''
 
         response = prompt(text, input: current, obscure: obscure)
 
         if response.empty?
-          File.delete(file) if File.exists?(file)
+          File.delete(file) if File.exist?(file)
         else
           File.write(file, response)
         end

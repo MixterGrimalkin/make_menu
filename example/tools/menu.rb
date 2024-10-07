@@ -68,7 +68,7 @@ MakeMenu.run do |menu|
 
   # A labelled badge which changes according to the presence of the file `.server_pid` on each re-draw
   menu.add_badge 'Local: '.black_bg.bold do
-    if File.exists?('.server_pid')
+    if File.exist?('.server_pid')
       ' ON-LINE '.green_bg.bold
     else
       ' OFFLINE '.red_bg.dark.bold
